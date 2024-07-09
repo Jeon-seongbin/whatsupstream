@@ -127,9 +127,16 @@ By: %s
 }
 
 func raiseNotification(title, description string, silentMode bool) error {
-	err := beeep.Alert(title, description, "")
 	if silentMode {
-		err = beeep.Notify(title, description, "")
+		if err := beeep.Notify(title, description, ""); err != nil {
+			return fmt.Errorf("error occurred while generating a notification alert: %w", err)
+		}
+		return nil
 	}
-	return fmt.Errorf("error occurred while generating a notification alert: %w", err)
+
+	if err := beeep.Alert(title, description, ""); err != nil {
+		return fmt.Errorf("error occurred while generating a notification alert: %w", err)
+	}
+
+	return nil
 }
